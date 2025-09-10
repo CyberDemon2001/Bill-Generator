@@ -8,12 +8,26 @@ export const loginRestaurant = async (email: string, password: string) => {
       email,
       password,
     });
-    return response.data;
-  } catch (error) {
-    console.error("Error logging in restaurant:", error);
-    throw error;
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    // Capture backend error response
+    if (error.response) {
+      return {
+        success: false,
+        status: error.response.status,
+        message: error.response.data?.message || "Something went wrong",
+      };
+    }
+
+    // Network or unknown error
+    return {
+      success: false,
+      status: 0,
+      message: "Couldn't connect to the server. Please check your internet connection.",
+    };
   }
 };
+
 
 export const createRestaurant = async (
   restaurantName: string,

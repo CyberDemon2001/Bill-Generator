@@ -1,4 +1,6 @@
 import React, { useState, useMemo, useRef, useCallback } from "react";
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
 import {
   View,
   Text,
@@ -184,35 +186,130 @@ export default function Index() {
     );
   };
 
-  const handleSubmit = async () => {
-    if (!customerName.trim()) return alert("Please enter a customer name.");
-    if (orderItems.length === 0)
-      return alert("Please add items to your order.");
-    setLoading(true);
-    try {
-      await createOrder({
-        customerName,
-        paymentMethod,
-        items: orderItems.map(
-          (i): CreateOrderItemPayload => ({
-            menuItemId: i.itemId,
-            categoryId: i.categoryId,
-            size: i.size,
-            quantity: i.quantity,
-          })
-        ),
-      });
-      alert("Order placed successfully 🎉");
-      setCustomerName("");
-      setOrderItems([]);
-      setCartVisible(false);
-    } catch (err) {
-      console.error("Failed to create order", err);
-      alert("Failed to create order.");
-    } finally {
-      setLoading(false);
+const handleSubmit = async () => {
+  if (!customerName.trim()) return alert("Please enter a customer name.");
+  if (orderItems.length === 0) return alert("Please add items to your order.");
+  setLoading(true);
+
+  try {
+    await createOrder({
+      customerName,
+      paymentMethod,
+      items: orderItems.map((i) => ({
+        menuItemId: i.itemId,
+        categoryId: i.categoryId,
+        size: i.size,
+        quantity: i.quantity,
+      })),
+    });
+
+    // ✅ Create HTML bill
+const billHtml = `
+<html>
+  <head>
+    <style>
+      body {
+        font-family: monospace, sans-serif;
+        font-size: 12px;
+        margin: 0;
+        padding: 5px;
+        width: 280px; /* ~88mm */
+      }
+      .center { text-align: center; }
+      .right { text-align: right; }
+      .line {
+        border-top: 1px dashed #000;
+        margin: 4px 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 4px;
+      }
+      td, th {
+        padding: 2px 0;
+      }
+      th {
+        font-weight: bold;
+        border-bottom: 1px dashed #000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="center">
+      <h2>Restaurant Name</h2>
+      <p>123 Street, City</p>
+      <p>+91-9876543210</p>
+    </div>
+
+    <div class="line"></div>
+
+    <p><strong>Customer:</strong> ${customerName}</p>
+    <p><strong>Payment:</strong> ${paymentMethod}</p>
+    <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+
+    <div class="line"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left;">Item</th>
+          <th style="text-align:center;">Qty</th>
+          <th style="text-align:right;">Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${orderItems
+          .map(
+            (i) => `
+          <tr>
+            <td>${i.name} (${i.size})</td>
+            <td class="center">${i.quantity}</td>
+            <td class="right">₹${(i.price * i.quantity).toFixed(2)}</td>
+          </tr>
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+
+    <div class="line"></div>
+
+    <p class="right"><strong>Total: ₹${totalOrderAmount.toFixed(2)}</strong></p>
+
+    <div class="line"></div>
+
+    <div class="center">
+      <p>Thank you for dining with us!</p>
+      <p>Visit Again 🙏</p>
+    </div>
+  </body>
+</html>
+`;
+
+
+    // ✅ Print the bill (on device)
+    const { uri } = await Print.printToFileAsync({ html: billHtml });
+    console.log("Bill saved to:", uri);
+
+    // ✅ Share or Print
+    if (await Sharing.isAvailableAsync()) {
+      await Sharing.shareAsync(uri);
+    } else {
+      await Print.printAsync({ uri });
     }
-  };
+
+    // Reset form
+    setCustomerName("");
+    setOrderItems([]);
+    setCartVisible(false);
+  } catch (err) {
+    console.error("Failed to create order", err);
+    alert("Failed to create order.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   // --- MEMOIZED VALUES (Unchanged) ---
   const totalOrderAmount = useMemo(

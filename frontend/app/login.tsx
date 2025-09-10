@@ -25,31 +25,50 @@ const LoginScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      setError("Please enter both email and password.");
+const handleLogin = async () => {
+  if (!email.trim() || !password.trim()) {
+    setError("Please enter both email and password.");
+    return;
+  }
+
+  setIsLoading(true);
+  setError(null);
+
+  try {
+    const result = await loginRestaurant(email, password);
+
+    if (!result.success) {
+      // Check status codes
+      switch (result.status) {
+        case 400:
+          setError("Email and password required.");
+          break;
+        case 401:
+          setError("Invalid email or password.");
+          break;
+        case 403:
+          Alert.alert("Subscription Required", result.message);
+          setError(result.message);
+          break;
+        default:
+          setError(result.message || "Login failed. Please try again.");
+      }
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
+    // ✅ Success case
+    const { restaurant } = result.data;
+    Alert.alert("Login Successful", `Welcome, ${restaurant.restaurantName}!`);
+    router.replace("/main");
 
-    try {
-      const data = await loginRestaurant(email, password);
+  } catch (err) {
+    console.error("Login API Error:", err);
+    setError("Unexpected error. Please try again later.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-      if (!data?.restaurant) {
-        setError(data?.message || "Login failed. Please try again.");
-      } else {
-        Alert.alert("Login Successful", `Welcome, ${data.restaurant.restaurantName}!`);
-        router.replace("/main");
-      }
-    } catch (err) {
-      console.error("Login API Error:", err);
-      setError("Couldn't connect to the server. Please check your internet connection.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>

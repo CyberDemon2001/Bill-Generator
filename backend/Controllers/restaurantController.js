@@ -61,6 +61,12 @@ const Login = async (req, res) => {
     if (!isMatch)
       return res.status(401).json({ message: "Invalid email or password" });
 
+    if(restaurant.subscriptionPlan.endDate < new Date()){
+      restaurant.subscriptionPlan.isActive = false;
+      await restaurant.save();
+      return res.status(403).json({ message: "Trial period has ended. Please upgrade your subscription." });
+    }
+
     const token = jwt.sign({ id: restaurant._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
@@ -127,5 +133,6 @@ const logout = (req, res) => {
   });
   res.status(200).json({ message: "Logout successful" });
 };
+
 
 module.exports = { createRestaurant, Login, updateRestaurant, getRestaurantData, logout };
