@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_MOBILE;
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_RENDER;
 
 export const loginRestaurant = async (email: string, password: string) => {
   try {

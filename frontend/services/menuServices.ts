@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Base API URL
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_MOBILE;
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_RENDER;
 
 // Axios instance configured to send cookies automatically
 const api = axios.create({
