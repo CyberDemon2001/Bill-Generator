@@ -135,4 +135,6 @@ const logout = (req, res) => {
 };
 
 
+
+
 module.exports = { createRestaurant, Login, updateRestaurant, getRestaurantData, logout };

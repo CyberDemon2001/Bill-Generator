@@ -43,6 +43,7 @@ export const getMenu = async (): Promise<MenuCategory[]> => {
   return response.data.categories || [];
 };
 
+
 /**
  * Create a new menu category or add items to an existing category
  */

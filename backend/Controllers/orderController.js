@@ -63,7 +63,7 @@ const createOrder = async (req, res) => {
     }
 
     // Tax & Total
-    const tax = parseFloat((subtotal * 0.05).toFixed(2)); // 5% tax
+    const tax = parseFloat((subtotal * 0.0).toFixed(2)); // 0% tax
     const totalAmount = parseFloat((subtotal + tax).toFixed(2));
 
     const newOrder = new Order({
@@ -88,9 +88,15 @@ const createOrder = async (req, res) => {
 // Get all orders (optionally by date & restaurantId)
 const getOrders = async (req, res) => {
   try {
-    let query = {};
+    const restaurantId = req.restaurant?.id;
+    if (!restaurantId) {
+      return res.status(400).json({ error: "restaurantId is required" });
+    }
 
-    // Date filter
+    // Always filter by restaurantId
+    let query = { restaurantId };
+
+    // Optional date filter
     if (req.query.date) {
       const targetDate = new Date(req.query.date);
       targetDate.setUTCHours(0, 0, 0, 0);
@@ -101,11 +107,6 @@ const getOrders = async (req, res) => {
       query.createdAt = { $gte: targetDate, $lt: nextDay };
     }
 
-    // Restaurant filter
-    if (req.query.restaurantId) {
-      query.restaurantId = req.query.restaurantId;
-    }
-
     const orders = await Order.find(query).sort({ createdAt: -1 });
 
     res.status(200).json(orders);
@@ -114,5 +115,6 @@ const getOrders = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 module.exports = { createOrder, getOrders };

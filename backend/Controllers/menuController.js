@@ -67,14 +67,44 @@ const createMenuCategory = async (req, res) => {
 // Get full menu of a restaurant
 const getMenu = async (req, res) => {
   try {
-    const restaurantId = req.restaurant.id;
+    const restaurantId = req.restaurant?.id;
+
+    // Validate input
+    if (!restaurantId) {
+      return res.status(400).json({ error: "Restaurant ID is missing" });
+    }
+
     const menu = await Menu.findOne({ restaurantId });
-    if (!menu) return res.status(404).json({ error: "Menu not found" });
+
+    if (!menu) {
+      return res.status(404).json({ error: "Menu not found" });
+    }
+
+    // Empty menu check
+    if (
+      (!menu.categories || menu.categories.length === 0) &&
+      (!menu.items || menu.items.length === 0)
+    ) {
+      return res.status(200).json({ categories: [] }); 
+      // ✅ better than 204, because frontend expects categories
+    }
+
     res.status(200).json(menu);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Error fetching menu:", error);
+
+    if (error.name === "CastError") {
+      return res.status(400).json({ error: "Invalid restaurant ID format" });
+    }
+
+    if (error.name === "ValidationError") {
+      return res.status(422).json({ error: error.message });
+    }
+
+    res.status(500).json({ error: "Something went wrong. Please try again." });
   }
 };
+
 
 // Update category name
 const updateMenuCategory = async (req, res) => {

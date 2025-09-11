@@ -82,18 +82,19 @@ export default function MenuScreen() {
   } | null>(null);
   const [editFormData, setEditFormData] = useState<any>({});
 
-  const fetchMenu = async () => {
-    try {
-      if (!loading) setLoading(true); // Show loader on manual refresh
-      const data = await getMenu();
-      setMenu(data);
-    } catch (err) {
-      console.error("Failed to fetch menu", err);
-      Alert.alert("Error", "Could not load menu");
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchMenu = async () => {
+  try {
+    if (!loading) setLoading(true); 
+    const data = await getMenu();
+    setMenu(data);
+  } catch (err) {
+    console.error("Failed to fetch menu", err);
+    Alert.alert("Error", "Could not load menu");
+  } finally {
+    setLoading(false);
+  }
+};
+
   
   // Refetch data every time the screen is focused
   useFocusEffect(
