@@ -5,10 +5,10 @@ import {
   ActivityIndicator,
   FlatList,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   Alert,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { getOrders } from "../../services/orderServices";
 import type {Order} from "../../services/orderServices";
 import DateTimePickerModal from "react-native-modal-datetime-picker";

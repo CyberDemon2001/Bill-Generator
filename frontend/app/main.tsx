@@ -7,7 +7,7 @@ import {
   TextInput,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
+  
   ActivityIndicator,
   Modal,
   Pressable,
@@ -18,6 +18,7 @@ import { getMenu } from "../services/menuServices";
 import { createOrder } from "../services/orderServices";
 import { router, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // --- INTERFACES (Unchanged) ---
 interface PriceInfo {

@@ -9,9 +9,9 @@ import {
   ActivityIndicator,
   Alert,
   StyleSheet,
-  SafeAreaView,
   StatusBar,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { updateRestaurant, getRestaurantProfile, logoutRestaurant } from "../../services/restaurantServices";
 
@@ -100,28 +100,32 @@ export default function ProfileScreen() {
   }
 
   // --- Main Component UI ---
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" />
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContentContainer}
-        keyboardShouldPersistTaps="handled"
-      >
+return (
+  <SafeAreaView style={styles.safeArea}>
+    <StatusBar barStyle="dark-content" />
+    <View style={styles.centeredContainer}>
+      <View style={styles.contentWrapper}>
         {/* Header */}
         <View style={styles.headerContainer}>
           <View style={styles.avatar}>
             <Ionicons name="storefront-outline" size={50} color="#4F46E5" />
           </View>
           <Text style={styles.headerTitle}>Restaurant Profile</Text>
-          <Text style={styles.headerSubtitle}>Update your restaurant's information</Text>
+          <Text style={styles.headerSubtitle}>
+            Update your restaurant's information
+          </Text>
         </View>
 
         {/* Profile Form */}
         <View style={styles.formContainer}>
           <Text style={styles.label}>Restaurant Name</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="business-outline" size={22} color="#6B7280" style={styles.inputIcon} />
+            <Ionicons
+              name="business-outline"
+              size={22}
+              color="#6B7280"
+              style={styles.inputIcon}
+            />
             <TextInput
               placeholder="Your Restaurant LLC"
               value={restaurantName}
@@ -133,7 +137,12 @@ export default function ProfileScreen() {
 
           <Text style={styles.label}>Address</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="location-outline" size={22} color="#6B7280" style={styles.inputIcon} />
+            <Ionicons
+              name="location-outline"
+              size={22}
+              color="#6B7280"
+              style={styles.inputIcon}
+            />
             <TextInput
               placeholder="123 Foodie Lane"
               value={address}
@@ -145,7 +154,12 @@ export default function ProfileScreen() {
 
           <Text style={styles.label}>Phone</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="call-outline" size={22} color="#6B7280" style={styles.inputIcon} />
+            <Ionicons
+              name="call-outline"
+              size={22}
+              color="#6B7280"
+              style={styles.inputIcon}
+            />
             <TextInput
               placeholder="(123) 456-7890"
               keyboardType="phone-pad"
@@ -171,19 +185,18 @@ export default function ProfileScreen() {
               </>
             )}
           </TouchableOpacity>
-          
-          {/* Logout Button (New) */}
-          <TouchableOpacity
-            onPress={handleLogout}
-            style={styles.logoutButton}
-          >
+
+          {/* Logout Button */}
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
             <Ionicons name="log-out-outline" size={22} color="#EF4444" />
             <Text style={styles.logoutButtonText}>Logout</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+      </View>
+    </View>
+  </SafeAreaView>
+);
+
 }
 
 // --- Styling ---
@@ -198,16 +211,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F9FAFB',
   },
+  centeredContainer: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  padding: 20,
+},
+contentWrapper: {
+  width: "100%",
+  alignItems: "center",
+},
+headerContainer: {
+  alignItems: "center",
+  marginBottom: 30,
+},
   scrollView: {
     flex: 1,
   },
   scrollContentContainer: {
     padding: 20,
     paddingBottom: 40,
-  },
-  headerContainer: {
-    alignItems: 'center',
-    marginBottom: 30,
   },
   avatar: {
     width: 100,

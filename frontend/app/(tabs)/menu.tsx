@@ -12,11 +12,11 @@ import {
   Platform,
   UIManager,
   Modal,
-  SafeAreaView,
   Pressable,
 } from "react-native";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router"; // Using useFocusEffect for consistency
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   getMenu,
   createMenu,

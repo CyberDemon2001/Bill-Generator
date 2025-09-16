@@ -25,87 +25,81 @@ const LoginScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-const handleLogin = async () => {
-  if (!email.trim() || !password.trim()) {
-    setError("Please enter both email and password.");
-    return;
-  }
-
-  setIsLoading(true);
-  setError(null);
-
-  try {
-    const result = await loginRestaurant(email, password);
-
-    if (!result.success) {
-      // Check status codes
-      switch (result.status) {
-        case 400:
-          setError("Email and password required.");
-          break;
-        case 401:
-          setError("Invalid email or password.");
-          break;
-        case 403:
-          Alert.alert("Subscription Required", result.message);
-          setError(result.message);
-          break;
-        default:
-          setError(result.message || "Login failed. Please try again.");
-      }
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter both email and password.");
       return;
     }
-
-    // ✅ Success case
-    const { restaurant } = result.data;
-    Alert.alert("Login Successful", `Welcome, ${restaurant.restaurantName}!`);
-    router.replace("/main");
-
-  } catch (err) {
-    console.error("Login API Error:", err);
-    setError("Unexpected error. Please try again later.");
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+    setIsLoading(true);
+    setError(null);
+    try {
+      const result = await loginRestaurant(email, password);
+      if (!result.success) {
+        switch (result.status) {
+          case 400:
+            setError("Email and password required.");
+            break;
+          case 401:
+            setError("Invalid email or password.");
+            break;
+          case 403:
+            Alert.alert("Subscription Required", result.message);
+            setError(result.message);
+            break;
+          default:
+            setError(result.message || "Login failed. Please try again.");
+        }
+        return;
+      }
+      const { restaurant } = result.data;
+      Alert.alert("Login Successful", `Welcome, ${restaurant.restaurantName}!`);
+      router.replace("/main");
+    } catch (err) {
+      console.error("Login API Error:", err);
+      setError("Unexpected error. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
+          
+         
 
           {/* --- Form Container --- */}
           <View style={styles.container}>
             <Text style={styles.title}>Welcome Back 👋</Text>
-            <Text style={styles.subtitle}>Login to continue managing your restaurant</Text>
+            <Text style={styles.subtitle}>Login to access your dashboard</Text>
 
             {error && <Text style={styles.errorText}>{error}</Text>}
 
             {/* Email */}
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>Email Address</Text>
             <View style={styles.inputContainer}>
-              <Feather name="mail" size={20} color="#888" style={styles.inputIcon} />
+              <Feather name="mail" size={20} color="#9CA3AF" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="demo@email.com"
+                placeholder="you@example.com"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholderTextColor="#aaa"
+                placeholderTextColor="#9CA3AF"
               />
             </View>
 
             {/* Password */}
             <Text style={styles.label}>Password</Text>
             <View style={styles.inputContainer}>
-              <Feather name="lock" size={20} color="#888" style={styles.inputIcon} />
+              <Feather name="lock" size={20} color="#9CA3AF" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="Enter your password"
@@ -113,10 +107,10 @@ const handleLogin = async () => {
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
-                placeholderTextColor="#aaa"
+                placeholderTextColor="#9CA3AF"
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#888" />
+                <Feather name={showPassword ? "eye" : "eye-off"} size={20} color="#9CA3AF" />
               </TouchableOpacity>
             </View>
 
@@ -125,6 +119,7 @@ const handleLogin = async () => {
               style={[styles.button, isLoading && styles.buttonDisabled]}
               onPress={handleLogin}
               disabled={isLoading}
+              activeOpacity={0.8}
             >
               {isLoading ? (
                 <ActivityIndicator color="#fff" />
@@ -136,11 +131,10 @@ const handleLogin = async () => {
             {/* Signup Redirect */}
             <View style={styles.signupContainer}>
               <Text style={styles.signupText}>Don’t have an account? </Text>
-              <TouchableOpacity onPress={() => router.replace("/signup")}>
-                <Text style={[styles.signupText, styles.signupLink]}>Sign up</Text>
+              <TouchableOpacity onPress={() => router.push("/signup")}>
+                <Text style={[styles.signupText, styles.signupLink]}>Sign Up</Text>
               </TouchableOpacity>
             </View>
-
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -155,39 +149,36 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-  },
-  header: {
-    height: 280,
-    backgroundColor: '#FF6B6B',
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    overflow: 'hidden',
     justifyContent: 'center',
+  },
+  headerImageContainer: {
     alignItems: 'center',
+    paddingVertical: 20,
   },
   headerImage: {
-    width: '100%',
-    height: '100%',
+    width: 250,
+    height: 200,
   },
   container: {
-    flex: 1,
     paddingHorizontal: 24,
-    paddingVertical: 32,
+    paddingBottom: 32,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#111827',
+    textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: '#6B7280',
+    textAlign: 'center',
     marginBottom: 24,
   },
   label: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 14,
+    color: '#374151',
     marginBottom: 8,
     fontWeight: '500',
   },
@@ -195,36 +186,37 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 12,
-    paddingHorizontal: 12,
+    borderColor: '#D1D5DB',
+    borderRadius: 14, // Consistent rounding
+    paddingHorizontal: 14,
     marginBottom: 20,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#F9FAFB',
   },
   inputIcon: {
-    marginRight: 10,
+    marginRight: 12,
   },
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
-    paddingVertical: 12,
+    color: '#111827',
+    paddingVertical: 14,
   },
   button: {
-    height: 50,
-    backgroundColor: '#FF6B6B',
+    height: 52,
+    backgroundColor: '#4F46E5', // Consistent primary color
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
-    marginTop: 8,
-    shadowColor: '#FF6B6B',
+    borderRadius: 14,
+    marginTop: 10,
+    shadowColor: '#4F46E5',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
     elevation: 8,
   },
   buttonDisabled: {
-    backgroundColor: '#ff9a9a',
+    backgroundColor: '#A78BFA', // Lighter purple for disabled state
+    elevation: 0,
   },
   buttonText: {
     color: '#fff',
@@ -232,7 +224,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   errorText: {
-    color: '#D9534F',
+    color: '#EF4444', // A modern, accessible red
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 16,
@@ -245,10 +237,10 @@ const styles = StyleSheet.create({
   },
   signupText: {
     fontSize: 14,
-    color: '#888',
+    color: '#6B7280',
   },
   signupLink: {
-    color: '#FF6B6B',
+    color: '#4F46E5', // Use primary color for links
     fontWeight: 'bold',
   },
 });

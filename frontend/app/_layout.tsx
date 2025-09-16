@@ -4,9 +4,19 @@ export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
-        headerTitle: "ThinkNBill",
+        headerShown: false,
       }}
     >
+      
+{/* Index screen: root screen, no back button */}
+      <Stack.Screen
+        name="index"
+        options={{
+          headerBackVisible: false,
+          headerTitle: "ThinkNBill",
+        }}
+      />
+
       {/* Login screen: hide back button & header */}
       <Stack.Screen
         name="login"
@@ -25,14 +35,6 @@ export default function RootLayout() {
         }}
       />
 
-      {/* Index screen: root screen, no back button */}
-      <Stack.Screen
-        name="index"
-        options={{
-          headerBackVisible: false,
-          headerTitle: "ThinkNBill",
-        }}
-      />
 
       {/* Main screen: normal back button */}
       <Stack.Screen
