@@ -16,7 +16,7 @@ const { height } = Dimensions.get("window");
 const WelcomeScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor="#6D28D9" />
+      <StatusBar barStyle="light-content" backgroundColor="#4F46E5" />
 
       {/* Top Purple Curved Background */}
       <View style={styles.topHalf} />
