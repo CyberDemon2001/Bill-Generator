@@ -48,6 +48,7 @@ const createRestaurant = async (req, res) => {
 
 const Login = async (req, res) => {
   try {
+    console.log("Logging in restaurant:", req.body);
     const { email, password } = req.body;
 
     if (!email || !password)

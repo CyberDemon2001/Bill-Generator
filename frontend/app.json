@@ -43,8 +43,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "5c77ea0d-bdbd-4b8e-8e17-ec723ef24ed1"
+        "projectId": "2eff71ba-8379-4c5b-98ae-5f5d3252359e"
       }
-    }
+    },
+    "owner": "cyberdemon_01"
   }
 }

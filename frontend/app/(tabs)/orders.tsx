@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { getOrders, Order } from "../../services/orderServices";
+import { getOrders } from "../../services/orderServices";
+import type {Order} from "../../services/orderServices";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";

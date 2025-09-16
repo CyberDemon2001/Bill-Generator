@@ -15,7 +15,7 @@ const PORT = process.env.PORT;
 DBConnect();
 
 app.use(express.json());
-app.use(cors({origin:"http://localhost:8081",credentials:true}));
+app.use(cors({origin:"*",credentials:true}));
 app.use(cookieParser());
 
 app.get('/', (req, res) => {
