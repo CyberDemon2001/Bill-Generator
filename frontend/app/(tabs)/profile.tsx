@@ -28,8 +28,10 @@ export default function ProfileScreen() {
       try {
         const response = await getRestaurantProfile();
         // --- CHANGE: Check for a successful response ---
-        if (response.success) {
-          const data = response.data;
+        console.log("Profile response:", response.restaurant);
+        
+        if (response) {
+          const data = response.restaurant;
           setRestaurantName(data.restaurantName || "");
           setAddress(data.address || "");
           setPhone(data.phone || "");

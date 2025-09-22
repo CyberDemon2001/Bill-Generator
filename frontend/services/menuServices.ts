@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Base API URL
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_MOBILE;
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_RENDER;
 
 // Axios instance configured to send cookies automatically
 const api = axios.create({
