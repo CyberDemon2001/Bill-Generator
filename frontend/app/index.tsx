@@ -1,5 +1,4 @@
 import { router } from "expo-router";
-import React from "react";
 import {
   View,
   Text,
@@ -9,11 +8,42 @@ import {
   StatusBar,
   Image,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 
 const { height } = Dimensions.get("window");
 
 const WelcomeScreen = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+          router.replace("/main");
+        }
+      } catch (error) {
+        console.error("Error reading token:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkLogin();
+  }, []);
+
+  if (loading) {
+    // Show a loader while checking token
+    return (
+      <SafeAreaView style={[styles.safeArea, { justifyContent: "center", alignItems: "center" }]}>
+        <ActivityIndicator size="large" color="#4F46E5" />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor="#4F46E5" />
@@ -64,38 +94,36 @@ const WelcomeScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#fff", // White background for the bottom part
+    backgroundColor: "#fff", 
   },
   topHalf: {
-    height: height * 0.55, // Takes up 55% of the screen height
-    backgroundColor: "#4F46E5", // A richer purple
-    borderBottomLeftRadius: 80, // Creates the curve
-    borderBottomRightRadius: 80, // Creates the curve
+    height: height * 0.55, 
+    backgroundColor: "#4F46E5",
+    borderBottomLeftRadius: 80,
+    borderBottomRightRadius: 80,
   },
   bottomHalf: {
     flex: 1,
     paddingHorizontal: 24,
-    backgroundColor: "transparent", // Keep transparent to see the curve
+    backgroundColor: "transparent",
   },
   contentWrapper: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 80, // Pushes content below the logo's space
+    marginTop: 80,
   },
   logoWrapper: {
     position: "absolute",
-    // Position it right at the transition point of the two halves
-    top: height * 0.55 - 80, // (55% of screen height) - (half of logo wrapper size)
-    alignSelf: "center", // Center horizontally
+    top: height * 0.55 - 80,
+    alignSelf: "center",
     zIndex: 5,
     width: 160,
     height: 160,
-    borderRadius: 80, // Perfect circle
+    borderRadius: 80,
     backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
-    // Softer shadow for a premium feel
     elevation: 10,
     shadowColor: "#000",
     shadowOpacity: 0.15,
@@ -108,28 +136,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: "bold", // Bolder for more impact
+    fontWeight: "bold",
     color: "#111827",
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 16,
-    color: "#4B5563", // Slightly darker gray for better contrast
+    color: "#4B5563",
     textAlign: "center",
     marginBottom: 40,
     paddingHorizontal: 10,
-    lineHeight: 24, // Improved readability
+    lineHeight: 24,
   },
   buttonGroup: {
     width: "100%",
   },
   button: {
     height: 52,
-    borderRadius: 14, // Slightly more rounded
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16,
-    // Add shadow to buttons
     elevation: 4,
     shadowColor: "#4F46E5",
     shadowOpacity: 0.2,
@@ -137,14 +164,13 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   loginButton: {
-    backgroundColor: "#4F46E5", // Match the top background
+    backgroundColor: "#4F46E5",
   },
-  // Secondary button style for "Sign Up" to create a clear visual hierarchy
   signupButton: {
     backgroundColor: "#fff",
     borderWidth: 1.5,
     borderColor: "#4F46E5",
-    elevation: 0, // No shadow for the secondary button
+    elevation: 0,
   },
   loginText: {
     color: "#fff",
@@ -152,7 +178,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   signupText: {
-    color: "#4F46E5", // Text color matches the border
+    color: "#4F46E5",
     fontSize: 18,
     fontWeight: "600",
   },

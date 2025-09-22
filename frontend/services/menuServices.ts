@@ -1,7 +1,8 @@
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Base API URL
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_RENDER;
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_MOBILE;
 
 // Axios instance configured to send cookies automatically
 const api = axios.create({
@@ -9,7 +10,14 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // ✅ sends cookies automatically
+});
+
+api.interceptors.request.use(async (config) => {
+  const token = await AsyncStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 // ----------------- Type Definitions -----------------

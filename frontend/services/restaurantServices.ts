@@ -1,6 +1,22 @@
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_RENDER;
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL_MOBILE;
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+api.interceptors.request.use(async (config) => {
+  const token = await AsyncStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export const loginRestaurant = async (email: string, password: string) => {
   try {
@@ -8,7 +24,11 @@ export const loginRestaurant = async (email: string, password: string) => {
       email,
       password,
     });
-    return { success: true, data: response.data };
+
+    if (response.data.token) {
+      await AsyncStorage.setItem("token", response.data.token);
+    }
+    return { ...response.data, success: true };
   } catch (error: any) {
     // Capture backend error response
     if (error.response) {
@@ -57,12 +77,10 @@ export const updateRestaurant = async (
   phone: string,
 ) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/restaurants/update`, {
+    const response = await api.put("/restaurants/update", {
       restaurantName,
       address,
       phone,
-    }, {
-      withCredentials: true, // ensure cookies/token are sent
     });
 
     return response.data;
@@ -74,9 +92,7 @@ export const updateRestaurant = async (
 
 export const getRestaurantProfile = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/restaurants/`, {
-      withCredentials: true, // ensure cookies/token are sent
-    });
+    const response = await api.get("/restaurants");
     return response.data;
   } catch (error) {
     console.error("Error fetching restaurant profile:", error);
@@ -86,9 +102,7 @@ export const getRestaurantProfile = async () => {
 
 export const logoutRestaurant = async () => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/restaurants/logout`, {}, {
-      withCredentials: true, // ensure cookies/token are sent
-    });
+    const response = await api.post("/restaurants/logout",);
     return response.data;
   } catch (error) {
     console.error("Error logging out restaurant:", error);

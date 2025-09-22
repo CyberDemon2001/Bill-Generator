@@ -34,6 +34,8 @@ const LoginScreen = () => {
     setError(null);
     try {
       const result = await loginRestaurant(email, password);
+      console.log("Login result:", result.success);
+      
       if (!result.success) {
         switch (result.status) {
           case 400:
@@ -51,7 +53,9 @@ const LoginScreen = () => {
         }
         return;
       }
-      const { restaurant } = result.data;
+      const { restaurant } = result;
+      console.log("Login successful:", restaurant);
+      
       Alert.alert("Login Successful", `Welcome, ${restaurant.restaurantName}!`);
       router.replace("/main");
     } catch (err) {

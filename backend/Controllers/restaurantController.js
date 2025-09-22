@@ -49,16 +49,15 @@ const createRestaurant = async (req, res) => {
 const Login = async (req, res) => {
   try {
     console.log("Logging in restaurant:", req.body);
-    const { email, password } = req.body;
 
-    if (!email || !password)
+    if (!req.body.email || !req.body.password)
       return res.status(400).json({ message: "Email and password required" });
 
-    const restaurant = await Restaurant.findOne({ email }).populate("menu");
+    const restaurant = await Restaurant.findOne({ email: req.body.email }).populate("menu");
     if (!restaurant)
       return res.status(401).json({ message: "Invalid email or password" });
 
-    const isMatch = await bcrypt.compare(password, restaurant.password);
+    const isMatch = await bcrypt.compare(req.body.password, restaurant.password);
     if (!isMatch)
       return res.status(401).json({ message: "Invalid email or password" });
 
@@ -70,14 +69,6 @@ const Login = async (req, res) => {
 
     const token = jwt.sign({ id: restaurant._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
-    });
-
-    // Set cookie
-    res.cookie("token", token, {
-      httpOnly: false,
-      secure: false, // must be false for localhost
-      sameSite: "lax", // 'none' + secure only works in HTTPS
-      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     const { password: _, ...restaurantData } = restaurant.toObject();
