@@ -7,6 +7,7 @@ require('dotenv').config();
 const menuRoutes = require('./Routes/menuRoutes');
 const orderRoutes = require('./Routes/orderRoutes');
 const restaurantRoutes = require('./Routes/restauantRoutes');
+const subscriptionRoutes = require('./Routes/subscriptionRoutes');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 app.use('/menu', menuRoutes);
 app.use('/orders', orderRoutes);
 app.use('/restaurants', restaurantRoutes);
+app.use('/subscription', subscriptionRoutes);
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log("Server running on port", PORT);

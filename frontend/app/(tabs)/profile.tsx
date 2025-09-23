@@ -20,6 +20,8 @@ export default function ProfileScreen() {
   const [restaurantName, setRestaurantName] = useState("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
+  const [plan, setPlan] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -28,13 +30,14 @@ export default function ProfileScreen() {
       try {
         const response = await getRestaurantProfile();
         // --- CHANGE: Check for a successful response ---
-        console.log("Profile response:", response.restaurant);
         
         if (response) {
           const data = response.restaurant;
           setRestaurantName(data.restaurantName || "");
           setAddress(data.address || "");
           setPhone(data.phone || "");
+          setPlan(data.subscriptionPlan.plan);
+          setEndDate(data.subscriptionPlan.endDate);
         } else {
           // --- CHANGE: Show user-friendly error from the service ---
           Alert.alert("Error", response.message || "Could not load profile");
@@ -124,6 +127,9 @@ export default function ProfileScreen() {
             <Text style={styles.headerTitle}>Restaurant Profile</Text>
             <Text style={styles.headerSubtitle}>
               Update your restaurant's information
+            </Text>
+            <Text style={[styles.headerSubtitle, { marginTop: 8, color: '#e21a0cff' }]}>
+              Current Plan: {plan} (Ends: {new Date(endDate).toLocaleDateString()})
             </Text>
           </View>
 
